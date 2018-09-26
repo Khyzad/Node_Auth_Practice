@@ -1,26 +1,24 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var exphbs = require('express-handlebars');
-var expressValidator = require('express-validator');
-var flash = require('connect-flash');
-var session = require('express-session');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var mongo = require('mongodb');
-var mongoose = require('mongoose');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const exphbs = require('express-handlebars');
+const expressValidator = require('express-validator');
+const flash = require('connect-flash');
+const session = require('express-session');
+const passport = require('passport');
+const mongoose = require('mongoose');
 
 
-var db = require('./config/keys').mongoURI;
+const db = require('./config/keys').mongoURI;
 mongoose.connect(db, { useNewUrlParser: true })
     .then(() => console.log('MongoDB connected...'))
     .catch(err => console.log(err));
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+const routes = require('./routes/index');
+const users = require('./routes/users');
 
-var app = express();
+const app = express();
 
 // view engine
 app.set('views', path.join(__dirname, 'views'));
@@ -49,7 +47,7 @@ app.use(passport.session());
 // express validator, taken from github
 app.use(expressValidator({
     errorFormatter: function (param, msg, value) {
-        var namespace = param.split('.'),
+        const namespace = param.split('.'),
             root = namespace.shift(),
             formParam = root;
 
@@ -68,7 +66,7 @@ app.use(expressValidator({
 // connect flash 
 app.use(flash());
 
-// global vars
+// global consts
 app.use(function (req, res, next) {
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error_msg = req.flash('error_msg');
