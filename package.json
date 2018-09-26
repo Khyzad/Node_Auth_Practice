@@ -1,0 +1,14 @@
+{
+  "name": "mern_reddit",
+  "version": "1.0.0",
+  "description": "Forum creation practice",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "khyzad",
+  "license": "MIT",
+  "dependencies": {
+    "concurrently": "^4.0.1"
+  }
+}
