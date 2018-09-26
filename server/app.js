@@ -16,7 +16,7 @@ mongoose.connect(db, { useNewUrlParser: true })
     .catch(err => console.log(err));
 
 const routes = require('./routes/index');
-const users = require('./routes/users');
+const users = require('./routes/api/user-routes');
 
 const app = express();
 
@@ -83,4 +83,4 @@ app.use('/users', users);
 app.set('port', (process.env.PORT || 8080));
 app.listen(app.get('port'), function () {
     console.log('Server starterd on port ' + app.get('port'));
-});
+}); 

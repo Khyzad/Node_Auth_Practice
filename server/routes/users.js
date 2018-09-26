@@ -29,12 +29,14 @@ router.post('/register', function (req, res) {
     req.checkBody('password', 'Name is required').notEmpty();
     req.checkBody('password2', 'Passwords do not match').equals(password);
 
+    res.status(202).json({message: hi});
 
     var errors = req.validationErrors();
     if (errors) {
         // if there are validation errors
-        res.render('register',
-            { errors: errors })
+        //res.render('register',
+          //  { errors: errors })
+        res.status(406).json({errors: errors});
 
     } else {
         // then check to see if the email and username are already taken
