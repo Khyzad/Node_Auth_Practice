@@ -80,6 +80,15 @@ router.get('/:id', function (req, res) {
 // update user
 
 // delete user
-
+router.delete('/:id', function(req, res){
+    User.findByIdAndDelete(req.params.id, function(err, user) {        
+        if(user){
+            res.status(200).json({})
+        }else{
+            res.status(406).json({msg: "user with that id does not exist"})
+        }
+    });
+    
+});
 
 module.exports = router;
