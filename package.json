@@ -12,6 +12,7 @@
   "author": "khyzad",
   "license": "MIT",
   "dependencies": {
-    "concurrently": "^4.0.1"
+    "concurrently": "^4.0.1",
+    "jasmine": "^3.2.0"
   }
 }
