@@ -28,6 +28,12 @@ module.exports.createUser = function (newUser, callback) {
     });
 }
 
+module.exports.generatePassword = function (password, callback) {
+    bcrypt.genSalt(10, function (err, salt) {
+        bcrypt.hash(password, salt, callback);
+    })
+}
+
 module.exports.getUserByUsername = function (username, callback) {
     var query = { username: username };
     User.findOne(query, callback);

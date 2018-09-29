@@ -78,6 +78,47 @@ router.get('/:id', function (req, res) {
 });
 
 // update user
+router.post("/update/:id", function (req, res) {
+    User.getUserById(req.params.id, function (err, user) {
+        if (user) {
+            req.checkBody('email', 'Email  is required').notEmpty();
+            req.checkBody('email', 'Email is not valid').isEmail();
+            req.checkBody('password', 'Name is required').notEmpty();
+            req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
+
+            let err = req.validationErrors();
+            if (err) {
+                res.status(400).json(err);
+            } else {
+                user.email = req.body.email;
+                user.name = req.body.name;
+                User.generatePassword(req.body.password, function (err, hash) {
+                    if (hash) {
+                        user.password = hash;
+                        user.save(function (err, callback) {                            
+                            if (callback) {
+                                res.status(200).json({});
+                            } else {
+                                res.status(500).json({
+                                    error: "Password couldn't be updated"
+                                });
+                            }
+                        })                        
+                    } else {
+                        res.status(500).json({
+                            error: "Password couldn't be updated"
+                        });
+                    }
+                });
+            }
+
+        } else {
+            res.status(406).json({
+                error: "user with that id does not exist"
+            });
+        }
+    });
+});
 
 // delete user
 router.delete('/:id', function (req, res) {
@@ -99,20 +140,6 @@ router.post("/validate/:id", function (req, res) {
     } else {
         User.getUserById(req.params.id, function (err, user) {
             if (user) {
-                // User.hashPassword(req.body.password, function (err, hash) {
-                //     if (hash) {
-                //         console.log(hash)
-                //         User.comparePassword(hash, user.password, function (err, isMatch) {
-                //             if (isMatch) {
-                //                 res.status(200).json({});
-                //             } else {
-                //                 res.status(406).json({ msg: "incorrect password" });
-                //             }
-                //         })
-                //     } else {
-                //         res.status(406).json({ msg: "oops" });
-                //     }
-                // })
                 User.comparePassword(req.body.password, user.password, function (err, isMatch) {
                     if (isMatch) {
                         res.status(200).json({});
