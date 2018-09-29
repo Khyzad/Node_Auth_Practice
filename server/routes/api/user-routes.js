@@ -66,55 +66,42 @@ router.post('/register', function (req, res) {
 
 // retrieve user
 router.get('/:id', function (req, res) {
-    User.getUserById(req.params.id, function (err, user) {
-        if (user) {
-            res.status(200).json({ user });
-        } else {
-            res.status(406).json({
-                error: "user with that id does not exist"
-            });
-        }
-    });
+    GetUser(req.params.id, res, (user) => {
+        res.status(200).json({ user });
+    })
 });
 
 // update user
 router.post("/update/:id", function (req, res) {
-    User.getUserById(req.params.id, function (err, user) {
-        if (user) {
-            req.checkBody('email', 'Email  is required').notEmpty();
-            req.checkBody('email', 'Email is not valid').isEmail();
-            req.checkBody('password', 'Name is required').notEmpty();
-            req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
+    GetUser(req.params.id, res, (user) => {
+        req.checkBody('email', 'Email  is required').notEmpty();
+        req.checkBody('email', 'Email is not valid').isEmail();
+        req.checkBody('password', 'Name is required').notEmpty();
+        req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
 
-            let err = req.validationErrors();
-            if (err) {
-                res.status(400).json(err);
-            } else {
-                user.email = req.body.email;
-                user.name = req.body.name;
-                User.generatePassword(req.body.password, function (err, hash) {
-                    if (hash) {
-                        user.password = hash;
-                        user.save(function (err, callback) {                            
-                            if (callback) {
-                                res.status(200).json({});
-                            } else {
-                                res.status(500).json({
-                                    error: "Password couldn't be updated"
-                                });
-                            }
-                        })                        
-                    } else {
-                        res.status(500).json({
-                            error: "Password couldn't be updated"
-                        });
-                    }
-                });
-            }
-
+        let err = req.validationErrors();
+        if (err) {
+            res.status(400).json(err);
         } else {
-            res.status(406).json({
-                error: "user with that id does not exist"
+            user.email = req.body.email;
+            user.name = req.body.name;
+            User.generatePassword(req.body.password, function (err, hash) {
+                if (hash) {
+                    user.password = hash;
+                    user.save(function (err, callback) {
+                        if (callback) {
+                            res.status(200).json({});
+                        } else {
+                            res.status(500).json({
+                                error: "Password couldn't be updated"
+                            });
+                        }
+                    })
+                } else {
+                    res.status(500).json({
+                        error: "Password couldn't be updated"
+                    });
+                }
             });
         }
     });
@@ -126,10 +113,9 @@ router.delete('/:id', function (req, res) {
         if (user) {
             res.status(200).json({});
         } else {
-            res.status(406).json({ msg: "user with that id does not exist" })
+            res.status(400).json(badJson);
         }
     });
-
 });
 
 // confirm password
@@ -138,20 +124,30 @@ router.post("/validate/:id", function (req, res) {
     if (!req.body.password) {
         res.status(406).json({ msg: "please enter a password" });
     } else {
-        User.getUserById(req.params.id, function (err, user) {
-            if (user) {
-                User.comparePassword(req.body.password, user.password, function (err, isMatch) {
-                    if (isMatch) {
-                        res.status(200).json({});
-                    } else {
-                        res.status(406).json({ msg: "incorrect password" });
-                    }
-                })
-            } else {
-                res.status(406).json({ msg: "user with that id does not exist" });
-            }
-        });
+        GetUser(req.params.id, res, (user) => {
+            User.comparePassword(req.body.password, user.password, (err, isMatch) => {
+                if (isMatch) {
+                    res.status(200).json({});
+                } else {
+                    res.status(406).json({ msg: "incorrect password" });
+                }
+            })
+        })
     }
-})
+});
+
+let GetUser = (id, res, callback) => {
+    User.findById(id, function (err, user) {
+        if (user) {
+            callback(user);
+        } else {
+            res.status(400).json(badJson);
+        }
+    });
+};
+
+const badJson = { msg: "User with that id does not exist" }
+
+
 
 module.exports = router;
