@@ -71,7 +71,7 @@ router.get('/:id', function (req, res) {
             res.status(200).json({ user });
         } else {
             res.status(406).json({
-                error: "user id does not exist"
+                error: "user with that id does not exist"
             });
         }
     });
@@ -80,15 +80,51 @@ router.get('/:id', function (req, res) {
 // update user
 
 // delete user
-router.delete('/:id', function(req, res){
-    User.findByIdAndDelete(req.params.id, function(err, user) {        
-        if(user){
-            res.status(200).json({})
-        }else{
-            res.status(406).json({msg: "user with that id does not exist"})
+router.delete('/:id', function (req, res) {
+    User.findByIdAndDelete(req.params.id, function (err, user) {
+        if (user) {
+            res.status(200).json({});
+        } else {
+            res.status(406).json({ msg: "user with that id does not exist" })
         }
     });
-    
+
 });
+
+// confirm password
+router.post("/validate/:id", function (req, res) {
+    console.log(req.body);
+    if (!req.body.password) {
+        res.status(406).json({ msg: "please enter a password" });
+    } else {
+        User.getUserById(req.params.id, function (err, user) {
+            if (user) {
+                // User.hashPassword(req.body.password, function (err, hash) {
+                //     if (hash) {
+                //         console.log(hash)
+                //         User.comparePassword(hash, user.password, function (err, isMatch) {
+                //             if (isMatch) {
+                //                 res.status(200).json({});
+                //             } else {
+                //                 res.status(406).json({ msg: "incorrect password" });
+                //             }
+                //         })
+                //     } else {
+                //         res.status(406).json({ msg: "oops" });
+                //     }
+                // })
+                User.comparePassword(req.body.password, user.password, function (err, isMatch) {
+                    if (isMatch) {
+                        res.status(200).json({});
+                    } else {
+                        res.status(406).json({ msg: "incorrect password" });
+                    }
+                })
+            } else {
+                res.status(406).json({ msg: "user with that id does not exist" });
+            }
+        });
+    }
+})
 
 module.exports = router;
