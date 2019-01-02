@@ -1,23 +1,41 @@
 const mongoose = require('mongoose');
 
 const PostSchema = mongoose.Schema({
+    title: {
+        type: String,
+    },
     author: {
-        type: String,        
+        type: String,
     },
     text: {
         type: String,
     },
-    comments:[{
-        PostId: {
-            type: String,
-        }
+    comments: [{
+        type: String
     }],
-    tags:[{
-        tagname: String,
+    tags: [{
+        type: String,
     }],
-    edited:{
+    edited: {
         type: Boolean,
     }
 })
 
 const Post = module.exports = mongoose.model('Post', PostSchema);
+
+const meta = {
+    author: {
+        type: String
+    }, editor: {
+        type: String
+    },
+    visibile: {
+        type: Boolean,
+    },
+    likes: {
+        type: Number
+    },
+    dislikes: {
+        type: Number
+    }
+}
