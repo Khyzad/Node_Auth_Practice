@@ -22,20 +22,3 @@ const PostSchema = mongoose.Schema({
 })
 
 const Post = module.exports = mongoose.model('Post', PostSchema);
-
-const meta = {
-    author: {
-        type: String
-    }, editor: {
-        type: String
-    },
-    visibile: {
-        type: Boolean,
-    },
-    likes: {
-        type: Number
-    },
-    dislikes: {
-        type: Number
-    }
-}
